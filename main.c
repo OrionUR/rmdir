@@ -2,12 +2,6 @@
 // that would normally be provided by default
 // to get definition of 'DT_DIR'
 #define _DEFAULT_SOURCE
-// #include <stdio.h>
-// #include <dirent.h>
-// #include <errno.h>
-// #include <sys/types.h>
-// #include <string.h>
-// #include <unistd.h>
 #include "remove_folder.h"
 
 /** check argument valid
