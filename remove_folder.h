@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////
 ///
-/// @file       remove.h
+/// @file       remove_folder.h
 /// @brief      head file of remove folder
 ///
 ////////////////////////////////////////////////////////////
@@ -17,25 +17,29 @@
 #define MAXIMUM_PATH_LENGTH        4096
 
 /** define a error type
- * there is total 5 error types
- * start from 0
 **/
 typedef enum ERROR_TYPE
 {
     EDEL_OK = 0,
     EDEL_OPEN,
     EDEL_CLOSE,
+    EDEL_ENTER,
     EDEL_FOLDER,
-    EDEL_FILE
+    EDEL_FILE,
+    EDEL_OVER_LENGTH,
+    EDEL_EXCLUSION,
+    EDEL_NO_SLASH,
+    EDEL_DIR
 } ERROR_T;
 
 
 /** delete folder
  * 
- * @param: DIR* dir,   a directory stream
- * @param: char* path,   the folder which is going to delete
- * @return: int,   0 for success, else for failure
+ * @param: const char *path:
+ *                  the folder which is going to delete
+ * @return: ERROR_T:
+ *                  'EDEL_OK' for success, else for failure
 **/
-ERROR_T delete_folder(const char* path);
+ERROR_T delete_folder(const char *path);
 
-#endif
+#endif // REMOVE_FOLDER_H
