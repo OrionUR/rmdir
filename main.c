@@ -1,37 +1,42 @@
+////////////////////////////////////////////////////////////
+///
+/// @file       main.C
+/// @brief      main file
+///
+////////////////////////////////////////////////////////////
+
+#include <stdio.h>
 #include "remove_folder.h"
-
-/** check argument valid
- * 
- * @param: int argc,   number of argument 
- * @param: const char* argv,   argument vector
- * @return: int,   0 for success, else for failure
-**/
-static ERROR_T check_arg(int argc, char* argv[])
-{
-    int argv_length;
-
-    if (2 != argc)
-    {
-        printf("Useage: %s <dir>\n", argv[0]);
-        return EDEL_DIR;
-    }
-
-    return EDEL_OK;
-}
 
 int main(int argc, char *argv[])
 {
-    if (EDEL_OK != (check_arg(argc, argv)))
+    if (2 != argc)
     {
+        printf("Useage: %s <dir>\n", argv[0]);
         return -1;
     }
 
-    if (EDEL_OK != (delete_folder(argv[1])))
+    switch (delete_folder(argv[1]))
     {
-        printf("Delete failure.\n");
-        return -1;
+        case EDEL_OVER_LENGTH:
+                printf("<dir> length is too long.\n");
+                return -1;
+        case EDEL_OPEN:
+                perror("opendir() error");
+                return -1;
+        case EDEL_CLOSE:
+                perror("closedir() error");
+                return -1;
+        case EDEL_FOLDER:
+                perror("rmdir() error");
+                return -1;
+        case EDEL_FILE:
+                perror("remove() error");
+                return -1;
+        case EDEL_DIR:
+                printf("<dir> is not valid.\n");
+                return -1;
+        default:
+                return 0;
     }
-    printf("Done!\n");
-
-    return 0;
 }
