@@ -1,12 +1,14 @@
 ////////////////////////////////////////////////////////////
 ///
-/// @file       main.C
+/// @file       main.c
 /// @brief      main file
 ///
 ////////////////////////////////////////////////////////////
 
 #include <stdio.h>
-#include "remove_folder.h"
+#include <string.h>
+#include <errno.h>
+#include "rmdir.h"
 
 int main(int argc, char *argv[])
 {
@@ -18,23 +20,14 @@ int main(int argc, char *argv[])
 
     switch (delete_folder(argv[1]))
     {
-        case EDEL_OVER_LENGTH:
-                printf("<dir> length is too long.\n");
+        case EDEL_OPEN_CLOSE:
+                printf("opendir() or closedir() error: %s\n", strerror(errno));
                 return -1;
-        case EDEL_OPEN:
-                perror("opendir() error");
+        case EDEL_FOLDER_FILE:
+                printf("remove() or rmdir() error: %s\n", strerror(errno));
                 return -1;
-        case EDEL_CLOSE:
-                perror("closedir() error");
-                return -1;
-        case EDEL_FOLDER:
-                perror("rmdir() error");
-                return -1;
-        case EDEL_FILE:
-                perror("remove() error");
-                return -1;
-        case EDEL_DIR:
-                printf("<dir> is not valid.\n");
+        case EDEL_PATH:
+                printf("<dir> error.\n");
                 return -1;
         default:
                 return 0;

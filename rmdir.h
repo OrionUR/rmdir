@@ -1,24 +1,21 @@
 ////////////////////////////////////////////////////////////
 ///
-/// @file       remove_folder.h
-/// @brief      head file of remove folder
+/// @file       rmdir.h
+/// @brief      head file of rmdir
 ///
 ////////////////////////////////////////////////////////////
 
-#ifndef REMOVE_FOLDER_H
-#define REMOVE_FOLDER_H
+#ifndef RMDIR_H
+#define RMDIR_H
 
 /** define a error type
 **/
 typedef enum ERROR_TYPE
 {
     EDEL_OK = 0,
-    EDEL_OPEN,
-    EDEL_CLOSE,
-    EDEL_FOLDER,
-    EDEL_FILE,
-    EDEL_OVER_LENGTH,
-    EDEL_DIR
+    EDEL_OPEN_CLOSE,
+    EDEL_FOLDER_FILE,
+    EDEL_PATH,
 } ERROR_T;
 
 /** delete folder
@@ -30,4 +27,4 @@ typedef enum ERROR_TYPE
 **/
 ERROR_T delete_folder(const char *path);
 
-#endif // REMOVE_FOLDER_H
+#endif // RMDIR_H
