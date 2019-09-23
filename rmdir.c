@@ -38,13 +38,19 @@ ERROR_T delete_folder(const char *path)
     char *p;
     int path_length, path_depth_level, path_changed;
 
+    if (NULL == path)
+    {
+        return EDEL_PATH;
+    }
+
     // check path's length
     // return false when length is over 4096
     if (MAXIMUM_PATH_LENGTH <= (path_length = strlen(path)))
     {
         return EDEL_PATH;
     }
-    strncpy(current_path, path, path_length);
+    memset(current_path, 0, sizeof(current_path));
+    strncat(current_path, path, path_length);
 
     // getting path information
     if (0 != stat(current_path, &s_buf))
@@ -97,12 +103,6 @@ ERROR_T delete_folder(const char *path)
             }
             *p = '\0';
             path_changed = 1;
-
-            if (0 != closedir(dir))
-            {
-                return EDEL_OPEN_CLOSE;
-            }
-
             path_depth_level--;
         }
         // if folder is not empty
@@ -123,12 +123,6 @@ ERROR_T delete_folder(const char *path)
                     return EDEL_PATH;
                 }
                 path_changed = 1;
-
-                if (0 != closedir(dir))
-                {
-                    return EDEL_OPEN_CLOSE;
-                }
-
                 path_depth_level++;
             }
             // if this is not a folder, then delete it
@@ -146,6 +140,14 @@ ERROR_T delete_folder(const char *path)
                 if (0 != remove(temp))
                 {
                     return EDEL_FOLDER_FILE;
+                }
+            }
+
+            if (1 == path_changed)
+            {
+                if (0 != closedir(dir))
+                {
+                    return EDEL_OPEN_CLOSE;
                 }
             }
         }
