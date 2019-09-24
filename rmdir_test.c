@@ -10,59 +10,45 @@
 #include <string.h>
 #include "rmdir.h"
 
-#define TEST_FOLDER                     "test_folder"
-#define TEST_LEVEL                      10
-#define MAXIMUM_STRING_LENGTH           6000
+#define ROOT_FOLDER                 "mkdir ./test_folder/"
+#define SUB_FOLDER      ROOT_FOLDER     "sub/"
+#define SSUB_FOLDER     SUB_FOLDER          "ssub/"
+#define SUB_FOLDER2     ROOT_FOLDER     "sub2/"
+#define SSUB_FOLDER2    SUB_FOLDER2         "ssub2/"
+#define FILEA               "touch ./test_folder/filea"
+#define FILEB               "touch ./test_folder/sub2/fileb.txt"
+#define DELETE_TEST_FOLDER       "rm -rf ./test/"
+#define ERROR_FILE          "./test_folder/abcde"
+#define ERROR_FOLDER        "./abcde/"
+#define CORRECT_FILE        "./test_folder//sub2/fileb.txt"
+#define CORRECT_FOLDER      "./test_folder/"
+
 #define MAXIMUM_TEST_STRING_LENGTH      4096
+#define MAXIMUM_STRING_LENGTH   MAXIMUM_TEST_STRING_LENGTH+1
 
 int initial_test()
 {
-    char *create_folder_command = "mkdir",
-         *create_file_command = "touch";
-    char path[MAXIMUM_STRING_LENGTH],
-         temp[MAXIMUM_STRING_LENGTH];
-    char ci[3];
-    int i;
+    FILE *fp;
 
-    // create test folder
-    memset(temp, 0, MAXIMUM_STRING_LENGTH);
-    memset(path, 0, MAXIMUM_STRING_LENGTH);
-    strncat(path, " ", 2);
-    strncat(path, TEST_FOLDER, strlen(TEST_FOLDER));
-    strncat(temp, create_folder_command, strlen(create_folder_command));
-    strncat(temp, path, strlen(path));
-    system(temp);
-
-    // create 10 folders and 10 files
-    // each folder include 1 file
-    for (i=1; i<=TEST_LEVEL; i++)
+    if ((0 != system(ROOT_FOLDER))
+    ||  (0 != system(SUB_FOLDER))
+    ||  (0 != system(SSUB_FOLDER))
+    ||  (0 != system(SUB_FOLDER2))
+    ||  (0 != system(SSUB_FOLDER2))
+    ||  (0 != system(FILEA))
+    ||  (0 != system(FILEB)))
     {
-        // convert int to char
-        // and add it into path
-        sprintf(ci, "%d", i);
-        strncat(path, "/", 2);
-        strncat(path, ci, strlen(ci));
+        return -1;
+    }
 
-        // create folder
-        memset(temp, 0, MAXIMUM_STRING_LENGTH);
-        strncat(temp, create_folder_command, strlen(create_folder_command));
-        strncat(temp, path, strlen(path));
-        if (0 != system(temp))
-        {
-            return -1;
-        }
-
-        // create file
-        memset(temp, 0, MAXIMUM_STRING_LENGTH);
-        strncat(temp, create_file_command, strlen(create_file_command));
-        strncat(temp, path, strlen(path));
-        strncat(temp, "/", 2);
-        strncat(temp, ci, strlen(ci));
-        strncat(temp, ".txt", 5);
-        if (0 != system(temp))
-        {
-            return -1;
-        }
+    if (NULL == (fp = fopen("./test_folder/sub2/fileb.txt", "w")))
+    {
+        return -1;
+    }
+    fputs("This is text file with content", fp);
+    if (0 != fclose(fp))
+    {
+        return -1;
     }
 
     return 0;
@@ -70,14 +56,7 @@ int initial_test()
 
 int end_test()
 {
-    char *rmdir_command = "rm -rf";
-    char temp[MAXIMUM_STRING_LENGTH];
-
-    memset(temp, 0, MAXIMUM_STRING_LENGTH);
-    strncat(temp, rmdir_command, strlen(rmdir_command));
-    strncat(temp, " ", 2);
-    strncat(temp, TEST_FOLDER, strlen(TEST_FOLDER));
-    if (0 != system(temp))
+    if (0 != system(DELETE_TEST_FOLDER))
     {
         return -1;
     }
@@ -87,15 +66,9 @@ int end_test()
 
 int main()
 {
-    char *path_null = NULL,
-         *path_empty = "",
-         *path_space = " ",
-         *path_error_folder = "./abcdef",
-         *path_error_file = "./test_folder/1/2/3/4/8.txt",
-         *path_correct_folder = "./test_folder",
-         *path_correct_file = "./test_folder/1/2/3/3.txt";
     char path_over_length[MAXIMUM_STRING_LENGTH];
-    memset(path_over_length, 50, MAXIMUM_TEST_STRING_LENGTH);
+    // fill full any valid character into path_over_length
+    memset(path_over_length, 'a', sizeof(path_over_length));
 
     // initialize
     printf("initializing...\n");
@@ -104,12 +77,11 @@ int main()
         printf("initialize error\n");
         return -1;
     }
-    system("tree ./test_folder");
     printf("initialize test folder......ok\n\n");
 
     // test path is NULL
     printf("testing path is NULL...\n");
-    if (EDEL_PATH != delete_folder(path_null))
+    if (EDEL_PATH != delete_folder(NULL))
     {
         printf("test error\n");
         goto error_occur;
@@ -118,7 +90,7 @@ int main()
 
     // test path is empty
     printf("testing path is empty...\n");
-    if (EDEL_PATH != delete_folder(path_empty))
+    if (EDEL_PATH != delete_folder(""))
     {
         printf("test error\n");
         goto error_occur;
@@ -127,7 +99,7 @@ int main()
 
     // test path is space
     printf("testing path is space...\n");
-    if (EDEL_PATH != delete_folder(path_space))
+    if (EDEL_PATH != delete_folder(" "))
     {
         printf("test error\n");
         goto error_occur;
@@ -143,27 +115,27 @@ int main()
     }
     printf("path is over length......ok\n\n");
 
-    // test path is error folder  name
-    printf("testing path is error folder name...\n");
-    if (EDEL_PATH != delete_folder(path_error_folder))
-    {
-        printf("test error\n");
-        goto error_occur;
-    }
-    printf("path is error folder name......ok\n\n");
-
     // test path is error file name
     printf("testing path is error file name...\n");
-    if (EDEL_PATH != delete_folder(path_error_file))
+    if (EDEL_PATH != delete_folder(ERROR_FILE))
     {
         printf("test error\n");
         goto error_occur;
     }
     printf("path is error file name......ok\n\n");
 
-    // test path is correct folder name
+    // test path is error folder  name
+    printf("testing path is error folder name...\n");
+    if (EDEL_PATH != delete_folder(ERROR_FOLDER))
+    {
+        printf("test error\n");
+        goto error_occur;
+    }
+    printf("path is error folder name......ok\n\n");
+
+    // test path is correct file name
     printf("testing path is correct file name...\n");
-    if (EDEL_OK != delete_folder(path_correct_file))
+    if (EDEL_OK != delete_folder(CORRECT_FILE))
     {
         printf("test error\n");
         goto error_occur;
@@ -172,13 +144,13 @@ int main()
 
     // test path is correct folder name
     printf("testing path is correct folder name...\n");
-    if (EDEL_OK != delete_folder(path_correct_folder))
+    if (EDEL_OK != delete_folder(CORRECT_FOLDER))
     {
         printf("test error\n");
         goto error_occur;
     }
     printf("path is correct folder name......ok\n\n");
-    printf("test done!!!\n");
+    printf("Done!!!\n");
 
     return 0;
 
