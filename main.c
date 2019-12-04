@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include "rmdir.h"
 
+// test for added some content
 int main(int argc, char *argv[])
 {
     if (2 != argc)
