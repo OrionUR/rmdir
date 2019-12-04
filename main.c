@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "rmdir.h"
 
-// test for added some content
+// test for added some content with second times
 int main(int argc, char *argv[])
 {
     printf("hello world\n");
