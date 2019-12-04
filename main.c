@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "rmdir.h"
 
-// test for added some content
+// I have changed the comment
 int main(int argc, char *argv[])
 {
     printf("hello world\n");
