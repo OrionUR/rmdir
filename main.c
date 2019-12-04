@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include "rmdir.h"
 
-// test for added some content with second times
 int main(int argc, char *argv[])
 {
     printf("hello world\n");
@@ -17,8 +16,7 @@ int main(int argc, char *argv[])
         printf("Useage: %s <dir>\n", argv[0]);
         return -1;
     }
-    int kk=0;
-    kk++;
+
     switch (delete_folder(argv[1]))
     {
         case EDEL_OK:
